@@ -1,0 +1,3 @@
+Install Packages
+Run the server
+Use postman collection to test apis

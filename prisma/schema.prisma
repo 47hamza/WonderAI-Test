@@ -1,0 +1,50 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
+  role     String   @default("user") // e.g., "admin", "user"
+  messages Message[]
+  likes    Like[]
+  comments Comment[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  likeCount Int      @default(0)
+  timestamp DateTime @default(now())
+  likes     Like[]
+  comments  Comment[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  messageId Int
+  message   Message  @relation(fields: [messageId], references: [id])
+  timestamp DateTime @default(now())
+
+  @@unique([userId, messageId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  messageId Int
+  message   Message  @relation(fields: [messageId], references: [id])
+  content   String
+  timestamp DateTime @default(now())
+}
